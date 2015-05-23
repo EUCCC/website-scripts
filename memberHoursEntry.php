@@ -1,27 +1,29 @@
 <?php
-namespace volunteerHoursEntry;
+namespace MemberHoursEntry;
 /**
- * Member Hours Update page/script for Experience Unlimited Joomla! website
+ * Volunteer Hours Entry page/script for Experience Unlimited Joomla! website
  *
  * This script allows a member to enter volunteer hours
  * 
- * @package    volunteerHoursEntry_v1.4.php
+ * @categor    EUMemberScripts
+ * @package    MemberHoursEntry
  * @author     Jean Shih <jean1shih@gmail.com>
  * @author     Ben Bonham <bhbonham@gmail.com>
  * @copyright  2014,2015 Experience Unlimited
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version    1.4
+ * @version    1.5
  */
 
 /* Modification log:
  * -------------------------------------------------------------------------
- * 2015/04/15	bb	 v1.4 change "Enter" -> "Other", renumber tasks 1,2,3 instead of 0,1,2,
- * 							add Back button (2 places)
- * 2015/01/30	bb   v1.3 create from adminHoursUpdate1.3.php
+ * 2015/05/15	bb	v1.5 don't pass $db to each function, add comments
+ * 2015/04/15	bb	v1.4 change "Enter" -> "Other", renumber tasks 1,2,3 instead of 0,1,2,
+ * 					add Back button (2 places)
+ * 2015/01/30	bb  v1.3 create from adminHoursUpdate1.3.php
  */
 
 echo <<<EOS
-<h2>   Volunteer Hours Entry v1.4  </h2>
+<h2>   Member Hours Entry v1.5 </h2>
 EOS;
 
 define('NUM_OTHER_TASK_MENUS', 3);  // # of dropdown menus for "Other Tasks"
@@ -48,8 +50,18 @@ $doc->addStyleDeclaration($style);
 ###########################################################################
 
 #------------------------------------------------------------------------
-function show_member_hours_balance($db, $userId )
+/**
+ * function show_member_hours_balance
+ *
+ * Queries database for member hours and displays them
+ * 
+ * Query database for hours tallied since the active date for the member
+ * 
+ * @param $userId member ID of user
+ */ 
+function show_member_hours_balance($userId)
 {   
+	$db = \JFactory::getDBO();
     if ( $userId )
     {
         $query = 
@@ -72,9 +84,19 @@ function show_member_hours_balance($db, $userId )
     return;
 }
 #------------------------------------------------------------------------
-function load_tasks_array($db)
+/**
+ * function load_tasks_array
+ * 
+ * Load tasks array from database
+ * 
+ * Query database for member task information, and stores this in $taskArray session
+ * 	variable
+ */ 
+function load_tasks_array()
 {
-		// Populate list of tasks for dropdown menus below
+	$db = \JFactory::getDBO();
+
+	// Populate list of tasks for dropdown menus below
 	$query = "SELECT * FROM `eu_member_tasks` 
 				WHERE display_type != 0
 				ORDER BY task_name;";
@@ -109,19 +131,22 @@ function load_tasks_array($db)
     return;
 }
 #------------------------------------------------------------------------
-function show_hours_entry_form($db ,$memId)
+/**
+ * functon show_hours_entry_form
+ * 
+ * Display unfilled form for entry of volunteer hours
+ * 
+ * Display unfilled form for entry of volunteer hours. Tasks and descriptions 
+ * used to create the form are taken from $taskArray session variable.
+ */ 
+function show_hours_entry_form()
 {
-   	
-	//$firstname = $member->first_name;
-	//$lastname = $member->last_name;
-	//echo "<h4>$firstname&nbsp$lastname </h4>";
-	
+   	$db = \JFactory::getDBO();
+
 	$taskArray = $_SESSION["taskArray"];
 	
 	// Populate list of tasks for dropdown menus below
 
-
-	show_member_hours_balance($db, $memId );
 	echo "<br/>";
 	echo '<table>';
 	// Checkboxes, for General Meeting, etc
@@ -199,8 +224,19 @@ function show_hours_entry_form($db ,$memId)
 	return;
 }
 #------------------------------------------------------------------------
-function update_member_hours_table($db, $memid, $taskid, $taskhrs, $taskdesc)
+/**
+ * function update_member_hours_table
+ * 
+ * Update database with a new task and hours
+ * 
+ * @param $memid member_id of user
+ * @param $taskid task_id of task to be entered
+ * @param $taskhrs number of hours to be credited for task
+ * @param $taskdesc description of task
+ */
+function update_member_hours_table($memid, $taskid, $taskhrs, $taskdesc)
 {
+	$db = \JFactory::getDBO();
 	$today = date("Y-m-d");
 	
 	// Create a new query object for inserting a row to eu_member_hours.
@@ -238,8 +274,21 @@ function update_member_hours_table($db, $memid, $taskid, $taskhrs, $taskdesc)
 	return;
 }
 #------------------------------------------------------------------------
-function add_hours_and_update_database_tables($db, $memId)
+/**
+ * function add_hours_and_update_database_tables
+ * 
+ * Update database with all tasks entered on form
+ * 
+ * Update database with all tasks entered on form and display number of 
+ * hours added. Tasks descriptions are taken from $taskArray session variable.
+ * 
+ * @param $memID member_id of user
+ * @return $success boolean true if database was updated, false if not updated (error)
+ */
+function add_hours_and_update_database_tables($memId)
 {
+	$db = \JFactory::getDBO();
+	
 	$totalHrsAdded = 0;	
 	$taskArray = $_SESSION["taskArray"];
 	
@@ -252,7 +301,7 @@ function add_hours_and_update_database_tables($db, $memId)
 			if (!empty($_POST["task_checkboxes_0$ii"])) {
 				$task_id = $taskArray['checkboxes'][$ii]->task_id;
 				$task_hours = $taskArray['checkboxes'][$ii]->default_task_hrs;
-				update_member_hours_table($db, $memId, $task_id, $task_hours, null );
+				update_member_hours_table($memId, $task_id, $task_hours, null );
 				$totalHrsAdded += $task_hours;
 			}
 		}
@@ -268,7 +317,7 @@ function add_hours_and_update_database_tables($db, $memId)
 						break;
 					}
 				}
-				update_member_hours_table($db, $memId, $task_id, $task_hours, null);
+				update_member_hours_table($memId, $task_id, $task_hours, null);
 				$totalHrsAdded += $task_hours;
 			}
 		}
@@ -278,7 +327,7 @@ function add_hours_and_update_database_tables($db, $memId)
 			$task_hours = trim($_POST["task_varhours_0$ii"]);
 			if (!empty($task_hours)) {
 				$task_id = $taskArray['varhours'][$ii]->task_id;
-				update_member_hours_table($db, $memId, $task_id, $task_hours, null);
+				update_member_hours_table($memId, $task_id, $task_hours, null);
 				$totalHrsAdded += $task_hours;
 			}
 		}
@@ -289,7 +338,7 @@ function add_hours_and_update_database_tables($db, $memId)
 			if (!empty($task_hours)) {
 				$task_id = $taskArray['misc'][$ii]->task_id;
 				$task_desc = trim($_POST["task_misc_desc_0$ii"]);
-				update_member_hours_table($db, $memId, $task_id, $task_hours, $task_desc );
+				update_member_hours_table($memId, $task_id, $task_hours, $task_desc );
 				$totalHrsAdded += $task_hours; 
 			}
 		}
@@ -305,10 +354,6 @@ function add_hours_and_update_database_tables($db, $memId)
 
 	echo "<br/><br/><h4>   Hours Added : &nbsp&nbsp $totalHrsAdded </h4>";  
 
-    // Display new net balance
-
-    show_member_hours_balance($db, $memId );   
-     
 	echo '<input type="button" value="Back" onClick=history.go(-1)>';
 
 	return $success;
@@ -318,16 +363,16 @@ function add_hours_and_update_database_tables($db, $memId)
  * Main body.                                                             *
  *========================================================================*/
 
-$db = \JFactory::getDBO();
 $user = \JFactory::getUser();
-
 $member_id = $user->id;
 
 if  (!isset($_POST['process'] )) { 
-	load_tasks_array($db);			  		 
-	show_hours_entry_form($db, $member_id);
+	load_tasks_array();			  		 
+	show_member_hours_balance($member_id);
+	show_hours_entry_form($member_id);
 } elseif ($_POST['process'] == 1) { 
-	add_hours_and_update_database_tables($db, $member_id);
+	add_hours_and_update_database_tables($member_id);
+    show_member_hours_balance($member_id);   
 } else {
 	echo "<br/>How did we ever get here???<br/>";
 } 
