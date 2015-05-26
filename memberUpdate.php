@@ -26,7 +26,7 @@
  * @copyright 2014 Experience Unlimited
  * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version   1.2
- * @link      http://euccc.org/live/member/member-update
+ * @link      https://github.com/EUCCC/website-scripts/blob/master/memberUpdate.php
  */
  
 /*

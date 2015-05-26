@@ -21,7 +21,7 @@
  * @copyright 2014-2015 Experience Unlimited
  * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version   1.4
- * @link      http://euccc.org/live/member/employer-recruiter-query
+ * @link      https://github.com/EUCCC/website-scripts/blob/master/publicEmplRecrQuery.php
  */
 
 /*

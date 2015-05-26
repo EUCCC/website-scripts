@@ -19,7 +19,7 @@
  * @copyright 2015 Experience Unlimited
  * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version   1.5
- * @link      http://euccc.org/live/admin-add-new-member
+ * @link      https://github.com/EUCCC/website-scripts/blob/master/adminAddNewMember.php
  */
  
 /*

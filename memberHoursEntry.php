@@ -12,6 +12,7 @@ namespace MemberHoursEntry;
  * @copyright  2014,2015 Experience Unlimited
  * @license    http://www.php.net/license/3_0.txt  PHP License 3.0
  * @version    1.5
+ * @link       https://github.com/EUCCC/website-scripts/blob/master/memberHoursEntry.php
  */
 
 /* Modification log:
