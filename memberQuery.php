@@ -99,7 +99,8 @@ $doc->addStyleDeclaration($style);
 
 // ------------------------------------------------------------------------
 /**
- * Reset search criteria to defaults
+ * Reset search criteria to defaults and set session variable startrow to 0
+ *   (used for table paging)
  * 
  * @return array $srch_parms Array of search parameters
  */ 
@@ -188,7 +189,7 @@ function formattedPhone($phone_strg)
 }
 // ------------------------------------------------------------------------
 /**
- * Load search parameters from submitted form
+ * Load search parameters from submitted form 
  * 
  * @return array $srch_parms    Array of search parameters
  */ 
@@ -221,7 +222,7 @@ function loadSearchParms()
 }
 // ------------------------------------------------------------------------
 /**
- * Replace phone and address with *HIDDEN* strings
+ * Replace phone and address with "*HIDDEN*" string
  * 
  * @param object $member member data object
  * 
@@ -240,9 +241,9 @@ function hideContactIfUnreachable($member)
 /**
  * Display table with member query results
  * 
- * @param object[] $members Array of member data objects
+ * @param array $members  Array of member data objects
  * 
- * @return None
+ * @return void
  */ 
 function showMemberData($members)
 {
@@ -293,7 +294,7 @@ function showMemberData($members)
  * @param string   $disabled    empty, or "disabled" if menu should be disabled
  * @param mixed    $selection   index of initial selection
  * 
- * @return None
+ * @return void
  */ 
 function insertPulldownMenu($label, $name, $index_array, $value_array, 
     $disabled, $selection
@@ -312,11 +313,11 @@ function insertPulldownMenu($label, $name, $index_array, $value_array,
 
 // ------------------------------------------------------------------------
 /**
- * Show form fields for search
+ * Show form fields for search, pre-filled if criteria have been set
  * 
  * @param array $srch_parms Search parameters
  * 
- * @return None
+ * @return void
  */ 
 function showSearchForm($srch_parms)
 {    
@@ -442,19 +443,14 @@ function showSearchForm($srch_parms)
 /**
  * Display table page of members satisfying search criteria
  * 
+ * Also display Next/Previous buttons if more than one table page
+ * 
  * @param array $srch_parms Array of search parameters
  * 
- * @return None
+ * @return void
  */ 
 function showSearchResults($srch_parms)
-{
-    /*
-     * Display Member Query search results 
-     * if BLOCKSIZE is less than the # of members returned by the query, this will
-     * break the results into BLOCKSIZE blocks and include Next/Previous 
-     * buttons on the page 
-     */
-     
+{     
     $db = \JFactory::getDBO();
     $mysession = \JFactory::getSession();
     $postdata = \JFactory::getApplication()->input->post;
@@ -529,7 +525,7 @@ function showSearchResults($srch_parms)
 /**
  * Load arrays for pulldown menus from database
  * 
- * @return None
+ * @return void
  */ 
 function loadSessionArraysForSearch()
 {
@@ -541,9 +537,9 @@ function loadSessionArraysForSearch()
 }
 // ------------------------------------------------------------------------
 /**
- * Load industries arrays (iid, iname) from database
+ * Load industries arrays (iid, iname) from database, adding "All" option
  * 
- * @return None
+ * @return void
  */ 
 function loadIndustryArray()
 {    
@@ -571,9 +567,11 @@ function loadIndustryArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Load statuses arrays (sid, sdesc) from database
+ * Load statuses arrays (sid, sdesc) from database, adding "All" option
  * 
- * @return None
+ * But do not allow search for Deleted members
+ * 
+ * @return void
  */ 
 function loadStatusesArrayForSearch()
 {
@@ -601,9 +599,9 @@ function loadStatusesArrayForSearch()
 }
 // ------------------------------------------------------------------------
 /**
- * Load job classes arrays (jid, jname) from database
+ * Load job classes arrays (jid, jname) from database, adding "All" option
  * 
- * @return None
+ * @return void
  */ 
 function loadJobClassArray()
 { 
@@ -631,9 +629,9 @@ function loadJobClassArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Load committees arrays (cid, cname) from database
+ * Load committees arrays (cid, cname) from database, adding "All" option
  * 
- * @return None
+ * @return void
  */ 
 function loadCommitteeArray()
 {  

@@ -21,6 +21,7 @@
  */
 
 /* version history
+ * 05/28/15 bb 1.10 add comments, don't pass $db to functions
  * 1.9.1  add note re. default date range
  * 1.9 -- bb start with default search displayed
  * 1.8 -- bb don't display date or comments; use gc.new_position instead of em.new_position * 1.7 -- bb change logic in main so it makes more sense
@@ -63,12 +64,18 @@ $doc->addStyleDeclaration($style);
 ###########################################################################
 
 #------------------------------------------------------------------------
-function reset_search_parms($mysession)
+/**
+ * Reset search criteria to defaults
+ * 
+ * @return array $srch_parms Array of search parameters
+ */ 
+function reset_search_parms()
 {
     /*
      * Clear or reset parameters used to build database query
      */
 
+	$mysession = \JFactory::getSession();
 	$srch_parms = array();
     $srch_parms['fname'] = "";
     $srch_parms['lname'] = "";
@@ -84,6 +91,15 @@ function reset_search_parms($mysession)
     return $srch_parms;
 }
 #------------------------------------------------------------------------
+
+/**
+ * Put date in standard US date format mm/dd/yyyy
+ * 
+ * @param string $date_strg date in any of several formats
+ * 
+ * @return string $new_date_strg  date in mm/dd/yyyy format, or empty if 
+ *             input is not a valid date
+ */ 
 function validated_date($date_strg)
 {
 	$new_date_strg = '';
@@ -104,7 +120,7 @@ function validated_date($date_strg)
 	}
 	else if (date_create($date_strg)) {
 		$new_date_strg = \JFactory::getDate($date_strg);
-		$new_date_strg = $new_date_strg->format('Y-m-d');
+		$new_date_strg = $new_date_strg->format('m/d/Y');
 	}
 	else {
 		echo '<br> Bad format for Active Date <br>';
@@ -112,8 +128,15 @@ function validated_date($date_strg)
 	return $new_date_strg;
 }
 #------------------------------------------------------------------------
-function load_search_parms($postdata)
+/**
+ * Load search parameters from submitted form
+ * 
+ * @return array  $srch_parms    array of search parameters
+ */ 
+function load_search_parms()
 {
+
+	$postdata = \JFactory::getApplication()->input->post;
     $srch_parms['fname'] = $postdata->get('fname','','STRING');
     $srch_parms['lname'] = $postdata->get('lname','','STRING');
 
@@ -137,6 +160,13 @@ function load_search_parms($postdata)
 
 }
 #------------------------------------------------------------------------
+/**
+ * Display table with member query results
+ * 
+ * @param array $members Array of member data objects
+ * 
+ * @return void
+ */ 
 function show_member_data($members)
 {
     /*
@@ -164,10 +194,18 @@ function show_member_data($members)
     }
 
     echo "</table>";
+    return;
 }
 
 
 #------------------------------------------------------------------------
+/**
+ * Show form fields for search
+ * 
+ * @param array $srch_parms Search parameters
+ * 
+ * @return void
+ */ 
 function show_search_form($srch_parms)
 {
     /*
@@ -215,8 +253,17 @@ function show_search_form($srch_parms)
     return;
 }
 #------------------------------------------------------------------------
-
-function show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata)
+/**
+ * Display table page of members satisfying search criteria
+ * 
+ * Also display Next/Previous buttons if results > one table page
+ * 
+ * @param array $srch_parms  Array of search criteria
+ * @param int $blocksize  Table page size
+ * 
+ * @return void
+ */ 
+function show_search_results($srch_parms, $blocksize)
 {
     /*
      * Display Member Query page -- Search controls at the top, search results below
@@ -225,7 +272,10 @@ function show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata
      * page
      */
 
-    echo '<form method="POST">';
+	$db = \JFactory::getDBO();
+	$mysession = \JFactory::getSession();
+	$postdata = \JFactory::getApplication()->input->post;
+	echo '<form method="POST">';
 
 	# determine which rows of search should be displayed on current page
 	$startrow = $mysession->get('startrow',0);
@@ -242,7 +292,7 @@ function show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata
 
     $mysession->set('startrow', $startrow);
 
-	$query = buildQueries($db,$srch_parms);
+	$query = buildQuery($db,$srch_parms);
 	$db->setQuery($query);
 	$db->query();
 	$cnt = $db->getNumRows();
@@ -277,8 +327,16 @@ function show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata
 }
 
 #------------------------------------------------------------------------
-function buildQueries($db,$srch_parms)
+/**
+ * Build query to get member's information from database
+ * 
+ * @param array $srch_parms Array of search criteria
+ * 
+ * @return object $query Query object
+ */ 
+function buildQuery($srch_parms)
 {
+	$db = \JFactory::getDBO();
 
 	$query = $db->getQuery(true);
 	$query
@@ -335,14 +393,14 @@ $mysession = \JFactory::getSession();
 $postdata = \JFactory::getApplication()->input->post;
 
 if (!$postdata->get('process') || $postdata->get('action') == 'Reset') {
-    $srch_parms = reset_search_parms($mysession);
+    $srch_parms = reset_search_parms();
     show_search_form($srch_parms);
-    show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata);
+    show_search_results($srch_parms, $blocksize);
 } else if ($postdata->get('process') == 1) {
 	// execute the search and display search results table
-	$srch_parms = load_search_parms($postdata);
+	$srch_parms = load_search_parms();
 	show_search_form($srch_parms);
-	show_search_results($db, $mysession, $srch_parms, $blocksize, $postdata);
+	show_search_results($srch_parms, $blocksize);
 } else {
 	// how did we get here?
 	echo "<br/><strong>how did we get here?</strong><br/>";

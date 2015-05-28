@@ -156,7 +156,7 @@ function validatedDate($date_strg)
         echo '<br> Bad format for Active Date <br>';
     } else if (date_create($date_strg)) {
         $new_date_strg = \JFactory::getDate($date_strg);
-        $new_date_strg = $new_date_strg->format('Y-m-d');
+        $new_date_strg = $new_date_strg->format('m/d/Y');
     } else {
         echo '<br> Bad format for Active Date <br>';
     }
@@ -164,7 +164,7 @@ function validatedDate($date_strg)
 }
 // ------------------------------------------------------------------------
 /**
- * Load arrays for pulldown menus from database
+ * Load session arrays for pulldown menus from database
  * 
  * @return void
  */ 
@@ -176,7 +176,7 @@ function loadSessionArrays()
 }
 // ------------------------------------------------------------------------
 /**
- * Load job leads arrays (jid, jdesc) from database
+ * Load session job leads arrays (jid, jdesc) from database, adding Not Selected option
  * 
  * @return void
  */ 
@@ -204,7 +204,7 @@ function loadJobLeadsArray()
 
 // ------------------------------------------------------------------------
 /**
- * Load statuses arrays (sid, sdesc) from database
+ * Load session status arrays (sid, sdesc) from database
  * 
  * @return void
  */ 
@@ -265,7 +265,9 @@ function displayBlankSearchForm()
 /**
  * Build and execute query to get member information from database
  * 
- * @param int $blocksize table page size for display
+ * Also display Next and Previous buttons if table is more than one page
+ * 
+ * @param int $blocksize  table page size for display
  * 
  * @return array $members  array of query objects with member data
  */ 
@@ -365,7 +367,9 @@ function buildAndExecuteSearchQuery($blocksize)
 }
 // ------------------------------------------------------------------------
 /**
- * Display table with member query results
+ * Display table with member query results with radio buttons for selection
+ * 
+ * Creates session table of member IDs corresponding to radio button indexes
  * 
  * @param array $members array of member data objects
  * 
@@ -474,7 +478,7 @@ function insertPulldownMenu($label, $name, $index_array, $value_array,
 }
 // ------------------------------------------------------------------------
 /**
- * Display blank goldcard form with member name filled in
+ * Display a goldcard form with member name filled in
  * 
  * @param object $member object with member data
  * 
@@ -647,8 +651,7 @@ function updateGoldcardDatabaseTable()
 }
 // ------------------------------------------------------------------------
 /**
- * Update joomla users table (new name & email) and block login unless 
- *         status is Active or Goldcard-Pending
+ * Update joomla users table to block login unless status is Goldcard-Pending
  * 
  * @return void
  */ 
@@ -676,7 +679,7 @@ function updateJoomlaUsersTable()
 }
 // ------------------------------------------------------------------------
 /**
- * Update eu_members table
+ * Update eu_members table with new goldcard information
  * 
  * @return void
  */ 
@@ -711,6 +714,8 @@ function updateMemberDatabaseTable()
 /**
  * Drop member from joomla group
  * 
+ * session variable $member_id indicates which member to drop
+ * 
  * @param string $group_name name of joomla group
  * 
  * @return void
@@ -739,7 +744,9 @@ function dropFromJoomlaGroup($group_name)
 // --------------------------------------------------------------------
 /**
  * Remove member from eu_board_members table and drop member from
- *         EU board of directors group
+ *         joomla EU board of directors group
+ * 
+ * session variable member_id indicates which member
  * 
  * @return void
  */ 
@@ -767,6 +774,8 @@ function closeOldBoardPositions()
 /**
  * Update joomla group(s)
  * 
+ * Presently drops from EU member database administrators group
+ * 
  * @return void
  */ 
 function updateJoomlaGroups()
@@ -777,6 +786,9 @@ function updateJoomlaGroups()
 /**
  * Update database tables as a single transaction
  * 
+ * Tables are: joomla users, any joomla EU groups, eu_members, 
+ *   and eu_gold_cards
+ * 
  * @return void
  */ 
 function updateDatabaseTables()
@@ -786,11 +798,11 @@ function updateDatabaseTables()
     $success = false;
     try {
         $db->transactionStart();
-        updateJoomlaUsersTable($db);
-        updateJoomlaGroups($db);
-        updateMemberDatabaseTable($db);
-        updateGoldcardDatabaseTable($db);
-        closeOldBoardPositions($db);
+        updateJoomlaUsersTable();
+        updateJoomlaGroups();
+        updateMemberDatabaseTable();
+        updateGoldcardDatabaseTable();
+        closeOldBoardPositions();
         $db->transactionCommit();        
         echo "<br/>Database updated<br/>";
         $success = true;

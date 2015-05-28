@@ -22,7 +22,7 @@
  * @minor     edit Roger Laurel <RogerLaurel@sbcglobal.net>
  * @copyright 2014 Experience Unlimited
  * @license   http://www.php.net/license/3_0.txt  PHP License 3.0
- * @version   1.13
+ * @version   1.14
  * @link      https://github.com/EUCCC/website-scripts/blob/master/adminMemberQuery.php
  */
 
@@ -62,7 +62,7 @@
 namespace AdminMemberQuery;
 
 echo <<<EOS
-<h1>Admin Member Query v1.13</h1>
+<h1>Admin Member Query v1.14</h1>
 Instructions
 <ul><li>Fill in desired fields, then click "Search"</li>
 </ul>
@@ -132,7 +132,9 @@ $doc->addStyleDeclaration($style);
 /**
  * Reset search criteria to defaults
  * 
- * @return mixed[] $srch_parms Array of search parameters
+ * Also sets session variable startrow to 0 (used for table paging)
+ * 
+ * @return array $srch_parms Array of search parameters
  */ 
 function resetSearchParms()
 {
@@ -255,7 +257,7 @@ function loadSearchParms()
 }
 // ------------------------------------------------------------------------
 /**
- * Replace phone and address with *HIDDEN* strings
+ * Replace phone and address with string "*HIDDEN*"
  * 
  * @param object $member member data object
  * 
@@ -273,13 +275,14 @@ function hideContactIfUnreachable($member)
 /**
  * Display table with member query results
  * 
- * @param object[] $members Array of member data objects
+ * @param array $members Array of member data objects
  * 
  * @return void
  */ 
 function showMemberData($members)
 {
-    echo "{emailprotector=off}"; // turn off email protector plugin
+    // turn off NoNumber email protector plugin - ** exposes addresses **
+    echo "{emailprotector=off}"; 
     $mysession = \JFactory::getSession();
     $bid = $mysession->get('bid');
     $bdesc = $mysession->get('bdesc');
@@ -376,22 +379,14 @@ function insertPulldownMenu($label, $name, $index_array, $value_array,
 }
 // ------------------------------------------------------------------------
 /**
- * Show form fields for search
+ * Show form with fields for search, prefilled with previous values
  * 
- * @param mixed[] $srch_parms Search parameters
+ * @param array $srch_parms  Previous values of search parameters
  * 
  * @return void
  */ 
 function showSearchForm($srch_parms)
 {    
-    /*
-     *  Set up/display controls for search 
-     *  First column: first name, last name, email, member status, committee, 
-     *  veteran status, board position
-     *  Second column: Date From and Date To: Active Status, Inactive Status, 
-     *  Orientation
-     */
-
     $db = \JFactory::getDBO();
     $mysession = \JFactory::getSession();
     loadSessionArraysForSearch();
@@ -510,19 +505,14 @@ function showSearchForm($srch_parms)
 /**
  * Display table page of members satisfying search criteria
  * 
- * @param mixed[] $srch_parms Array of search parameters
+ * Also display Next and Previous buttons if more than one page of results
+ * 
+ * @param array $srch_parms  Array of search parameters
  * 
  * @return void
  */ 
 function showSearchResults($srch_parms)
 {
-    /*
-     * Display search results
-     * if BLOCKSIZE is less than the # of members returned by the query, this will
-     * break the results into BLOCKSIZE blocks and include Next/Previous buttons on the 
-     * page 
-     */
-     
     $db = \JFactory::getDBO();
     $mysession = \JFactory::getSession();
     $postdata = \JFactory::getApplication()->input->post;
@@ -611,7 +601,6 @@ function loadSessionArraysForSearch()
  */ 
 function loadVeteransArray()
 {
-    $db = \JFactory::getDBO();
     $mysession = \JFactory::getSession();
     $vid = array("AL","0","1");
     $vdesc = array("Not Selected","No", "Yes");
@@ -623,7 +612,8 @@ function loadVeteransArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Load board arrays (bid, bdesc) from database
+ * Load board arrays (bid, bdesc) from database with "Not Selected" and
+ *   "Any" options
  * 
  * @return void
  */ 
@@ -655,7 +645,7 @@ function loadBoardArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Load statuses arrays (sid, sdesc) from database
+ * Load statuses arrays (sid, sdesc) from database with "All" option
  * 
  * @return void
  */ 
@@ -685,7 +675,7 @@ function loadStatusesArrayForSearch()
 }
 // ------------------------------------------------------------------------
 /**
- * Load committees arrays (cid, cname) from database
+ * Load committees arrays (cid, cname) from database adding "All" option
  * 
  * @return void
  */ 
@@ -717,9 +707,9 @@ function loadCommitteeArray()
 /**
  * Build query to get member's information from database
  * 
- * @param mixed[] $srch_parms Array of search criteria
+ * @param array $srch_parms  Array of search criteria
  * 
- * @return object $query Query object
+ * @return object $query  Query object
  */ 
 function buildQueries($srch_parms)
 {

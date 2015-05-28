@@ -95,8 +95,9 @@ function validatedDate($date_strg)
  * 
  * @param string $phone_strg Phone number in any of several formats
  * 
- * @return string $new_phone_strg Formatted phone number, or error message if
- *             input string cannot be converted
+ * @throws Exception if input string cannot be converted
+ * 
+ * @return string $new_phone_strg Formatted phone number
  */ 
 function formattedPhone($phone_strg)
 {
@@ -117,9 +118,16 @@ function formattedPhone($phone_strg)
 }
 // --------------------------------------------------------------------
 /**
- * Send email to welcome new Pending member
+ * Send email to welcome a new Pending member
+ * 
+ * The template for the mail to be sent is a joomla article with title
+ *   LIKE "pending member welcom template". In the template, the strings
+ *   "{first_name}" and "{orient_date}" are replaced with values from the
+ *   $member_data array.
  * 
  * @param array $member_data array of member data
+ * 
+ * @throws Exception if mail is not sent
  * 
  * @return void
  */ 
@@ -166,10 +174,13 @@ function sendWelcomeEmail($member_data)
 }
 // --------------------------------------------------------------------
 /**
- * Update joomla users table (new name & email) and block login unless 
- *         status is Active or Goldcard-Pending
+ * Add new user to joomla users table (new name & email) and block login 
+ *         unless status has been set to Active or Goldcard-Pending
  * 
  * @param array $member_data array of member data
+ * 
+ * @throws Exception if username (i.e., email address) is already in use,
+ *                   or if user addition fails for some other reason
  * 
  * @return int $new_user_id
  */ 
@@ -252,10 +263,12 @@ function updateJoomlaUsersTable($member_data)
 }
 // ------------------------------------------------------------------------
 /**
- * Update eu_members table
+ * Update the eu_members table with new member's data
  * 
  * @param array $member_data data for new pending member
  * @param int   $new_user_id EU member id of new pending member
+ * 
+ * @throws Exception if orientation date is not valid
  * 
  * @return void
  */ 
@@ -297,7 +310,7 @@ function updateMembersTable($member_data, $new_user_id)
 }
 // --------------------------------------------------------------------
 /**
- * Update database tables as a single transaction
+ * Update database tables as a single transaction and send a welcome email
  * 
  * @param array $member_data array of member data
  * 
@@ -340,7 +353,7 @@ function resetMemberData()
 }
 // --------------------------------------------------------------------
 /**
- * Load member data array from form
+ * Load member data array from submitted form
  * 
  * @return array $member_data  array of member data
  */ 
@@ -363,9 +376,9 @@ function loadMemberData()
 }
 // --------------------------------------------------------------------
 /**
- * Show form fields for member data entry
+ * Show form for entry of new member data
  * 
- * @param array $member_data array of member data
+ * @param array $member_data  array of member data
  * 
  * @return void
  */ 

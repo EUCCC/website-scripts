@@ -18,7 +18,8 @@
 
 /* Modification log:
  * -------------------------------------------------------------------------
- * 2015/05/21	bb	1.3	add comments, don't pass $db to functions
+ * 2015/05/21	bb	1.3	add comments, don't pass $db to functions, remove 
+ *                  unused showMemberData function
  * 2015/04/17	bb	v1.2 secondary ordering by task name, change date format 
  * 					to m/d/Y, added Back buttons, change isset($_POST) to 
  * 					null !== $postdata->get (and the complement)
@@ -120,45 +121,6 @@ $doc->addStyleDeclaration($style);
 
 // ------------------------------------------------------------------------
 /**
- * Display table with member query results 
- * 
- * @param array $members array of member objects
- * 
- * @return void
- */ 
-function showMemberData($members)
-{
-    /*
-     */
-     
-    // Display column headings 
-    echo '<br><table id=table_1>';
-    echo '<tr>
-    <th>Member ID</th>
-    <th>First Name:</th>
-    <th>Last Name</th>
-    <th>Email</th>
-    <th>Status</th>
-    </tr>';
-        
-    // Display member data 
-    foreach ($members as $member) {
-        echo "<tr>";
-        echo 
-        "<td align=center>" . $member->member_id . "</td>" .
-        "<td align=center>" . $member->first_name . "</td>" .
-        "<td align=center>" . $member->last_name . "</td>" .
-        "<td align=center>" . $member->email_address . "</td>" .
-        "<td align=center>" . $member->Status . "</td>" .
-        "</tr>";
-    }
-
-    echo "</table>";
-    return;
-}
-
-// ------------------------------------------------------------------------
-/**
  * Display member hours
  * 
  * @param string $member_name name of member (first last)
@@ -241,7 +203,11 @@ function displayBlankSearchForm()
 // ------------------------------------------------------------------------
 // ------------------------------------------------------------------------
 /**
- * Build and execute query to get member information from database
+ * Build and execute query to get one table page of member 
+ *     information from database
+ *
+ * Also displays Next and Previous buttons if query returns more than
+ *     one page
  * 
  * @return array $members  array of query objects with member data
  */ 
@@ -339,7 +305,11 @@ function buildAndExecuteSearchQuery()
 }
 // ------------------------------------------------------------------------
 /**
- * Display table with member query results
+ * Display table with one page of member query results with radio buttons
+ *   to select one member
+ * 
+ * Creates session variable table_of_ids to hold IDs of members in this
+ *   table page (indexed by table row number)
  * 
  * @param array $members array of member data objects
  * 
@@ -383,8 +353,8 @@ function displayManyMembersTable($members)
 }
 // ------------------------------------------------------------------------
 /**
- * Query database for member task information, and store this in $taskArray session
- *     variable
+ * Query database for member task information, and store this in session
+ *   taskArray variable
  * 
  * @return void
  */ 
@@ -427,13 +397,13 @@ function loadTasksArray()
 }
 // -----------------------------------------------------------------------
 /**
- * Query database for tasks credited to member since active date
+ * Query database for tasks credited to given member since active date
  * 
  * @param int $member_id member_id of member
  * 
  * @return array($member_name, $tasks)
  *               string $member_name "first last"
- *               array  $tasks       objects describing tasks
+ *               array  $tasks       list of objects describing tasks
  */ 
 function buildAndExecuteMemberHoursQuery($member_id)
 {

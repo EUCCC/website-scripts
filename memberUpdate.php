@@ -93,8 +93,9 @@ $doc->addStyleDeclaration($style);
  * 
  * @param string $phone_strg string containing phone number
  * 
- * @return string $new_phone_strg string containing phone number in standard format
- *                                empty if $phone_strg is empty
+ * @return string $new_phone_strg phone number in standard format or
+ *                                empty if input $phone_strg is empty
+ * 
  * @throws Exception if bad format for $phone_strg
  */ 
 function formattedPhone($phone_strg)
@@ -116,7 +117,7 @@ function formattedPhone($phone_strg)
 /**
  * Load arrays for pulldown menus from database
  * 
- * @return None
+ * @return void
  */ 
 function loadSessionArrays()
 {
@@ -132,7 +133,7 @@ function loadSessionArrays()
 /**
  * Load board positions arrays (pid, pname) from database
  * 
- * @return None
+ * @return void
  */ 
 function loadBoardPositionsArray()
 {    
@@ -161,7 +162,7 @@ function loadBoardPositionsArray()
 /**
  * Load industries arrays (iid, iname) from database
  * 
- * @return None
+ * @return void
  */ 
 function loadIndustryArray()
 {    
@@ -189,7 +190,7 @@ function loadIndustryArray()
 /**
  * Load statuses arrays (sid, sdesc) from database
  * 
- * @return None
+ * @return void
  */ 
 function loadStatusesArrayForUpdate()
 {  
@@ -217,7 +218,7 @@ function loadStatusesArrayForUpdate()
 /**
  * Load job classes arrays (jid, jname) from database
  * 
- * @return None
+ * @return void
  */ 
 function loadJobClassArray()
 { 
@@ -245,7 +246,7 @@ function loadJobClassArray()
 /**
  * Load committees arrays (cid, cname) from database
  * 
- * @return None
+ * @return void
  */ 
 function loadCommitteeArray()
 {  
@@ -271,9 +272,10 @@ function loadCommitteeArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Load US states arrays (usid, usname, uscode) from database
+ * Load US states arrays (usid, usname, uscode) from database, adding
+ *     "Not Selected" option
  * 
- * @return None
+ * @return void
  */ 
 function loadUSStatesArray()
 {  
@@ -308,7 +310,7 @@ function loadUSStatesArray()
 /**
  * Build query to get member's information from database
  * 
- * @param int $user_id_to_edit member_id of member to get information for
+ * @param int $user_id_to_edit  EU member ID of member being queried
  * 
  * @return query object
  */ 
@@ -460,9 +462,9 @@ function insertPulldownMenu($label, $name, $index_array, $value_array, $disabled
 }
 // --------------------------------------------------------------------
 /**
- * Display form to change member data
+ * Display form to change member data, pre-filled with current member data
  * 
- * @return None
+ * @return void
  */ 
 function showMemberForm() 
 {
@@ -643,11 +645,11 @@ function showMemberForm()
 
 // --------------------------------------------------------------------
 /**
- * Update members table in database
+ * Update eu_members table in database
  * 
- * @param int $user_id_to_edit EU member_id of user to update
+ * @param int $user_id_to_edit  EU member ID of user to update
  * 
- * @return None
+ * @return void
  */ 
 function updateMembersTable($user_id_to_edit)
 {
@@ -691,11 +693,13 @@ function updateMembersTable($user_id_to_edit)
 }
 // --------------------------------------------------------------------
 /**
- * Update member urls table in database
+ * Update eu_member_urls table in database
  * 
- * @param int $user_id_to_edit EU member_id of user to update
+ * Do not update if member has more than one URL in database
  * 
- * @return None
+ * @param int $user_id_to_edit  EU member ID of member to update
+ * 
+ * @return void
  */ 
 function updateMemberURLsTable($user_id_to_edit)
 {
@@ -747,7 +751,7 @@ function updateMemberURLsTable($user_id_to_edit)
  * 
  * @param int $user_id_to_edit EU member id of user to update
  * 
- * @return None
+ * @return void
  */ 
 function updateJoomlaUsersTable($user_id_to_edit)
 {
@@ -787,11 +791,11 @@ function updateJoomlaUsersTable($user_id_to_edit)
 }
 // --------------------------------------------------------------------
 /**
- * Update tables in database
+ * Update multiple tables in database
  * 
  * @param int $user_id_to_edit EU member_id of user to update
  * 
- * @return None
+ * @return void
  */ 
 function updateDatabaseTables($user_id_to_edit)
 {

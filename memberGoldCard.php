@@ -93,7 +93,7 @@ function validatedDate($date_strg)
         echo '<br> Bad format for Active Date <br>';
     } else if (date_create($date_strg)) {
         $new_date_strg = \JFactory::getDate($date_strg);
-        $new_date_strg = $new_date_strg->format('Y-m-d');
+        $new_date_strg = $new_date_strg->format('m/d/Y');
     } else {
         echo '<br> Bad format for Active Date <br>';
     }
@@ -386,9 +386,9 @@ function updateMemberDatabaseTable()
 }
 // ------------------------------------------------------------------------
 /**
- * Update tables in database
+ * Update eu_members and eu_gold_cards tables in database
  * 
- * @return boolean $success    True if database updated, False if not
+ * @return boolean $success  True if database updated, False if not
  */ 
 function updateDatabaseTables()
 {

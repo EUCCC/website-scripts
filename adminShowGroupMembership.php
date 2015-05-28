@@ -83,7 +83,7 @@ $doc->addStyleDeclaration($style);
 /**
  * Retrieve list of EU groups from database (those that begin with "EU")
  * 
- * @return string[]    $grouplist    Array of group names
+ * @return array    $grouplist    Array of group names
  */ 
 function getEUGroupList()
 {
@@ -113,7 +113,7 @@ function getEUGroupList()
  * 
  * @param string $group_title Name of group
  * 
- * @return object[]    $userlist    Array of user names in group
+ * @return array    $userlist    Array of user names in group
  */ 
 function findGroupMembership($group_title)
 {
@@ -169,7 +169,7 @@ function findGroupMembership($group_title)
  * Display group membership
  * 
  * @param string   $groupname Name of group
- * @param object[] $userlist  Array of users in group
+ * @param array $userlist  Array of users in group
  * 
  * @return None
  */ 

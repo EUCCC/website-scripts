@@ -73,13 +73,14 @@ $doc->addStyleDeclaration($style);
 
 // ------------------------------------------------------------------------
 /**
- * Query database for hours tallied since the active date for the member
+ * Query database and display hours tallied since the active date 
+ *   for the member
  * 
  * @param int $userId member ID of user
  * 
  * @return void
  */ 
-function showMemberHoursBalance($userId )
+function showMemberHoursBalance($userId)
 {   
     $db = \JFactory::getDBO();
     if ($userId ) {
@@ -103,7 +104,7 @@ function showMemberHoursBalance($userId )
 }
 // ------------------------------------------------------------------------
 /**
- * Show form fields for search
+ * Show form fields for member search
  * 
  * @return void
  */ 
@@ -133,7 +134,11 @@ function displayBlankSearchForm()
 }
 // ------------------------------------------------------------------------
 /**
- * Build and execute query to get member information from database
+ * Build and execute query to get one table page of member information 
+ *   from database
+ * 
+ * Show Next and Previous buttons if more than one table page of 
+ *   members is available
  * 
  * @return array $members  array of query objects with member data
  */ 
@@ -232,7 +237,9 @@ function buildAndExecuteSearchQuery()
 }
 // ------------------------------------------------------------------------
 /**
- * Display table with member query results
+ * Display table with one table page of members with radio buttons to select
+ * 
+ * Stores member IDs in session variable table_of_ids, indexed by table row
  * 
  * @param array $members array of member data objects
  * 
@@ -277,8 +284,8 @@ function displayManyMembersTable($members)
 }
 // ------------------------------------------------------------------------
 /**
- * Query database for member task information, and store this in $taskArray session
- *     variable
+ * Query database for member task information, and store this in session 
+ *   taskArray variable
  * 
  * @return void
  */ 
@@ -321,7 +328,7 @@ function loadTasksArray()
 }
 // ------------------------------------------------------------------------
 /**
- * Display unfilled form for entry of volunteer hours. Tasks and descriptions 
+ * Display empty form for entry of volunteer hours. Tasks and descriptions 
  * used to create the form are taken from $taskArray session variable.
  * 
  * @param object $member object with information of member to update
@@ -426,7 +433,7 @@ function showHoursEntryForm($member)
 }
 // ------------------------------------------------------------------------
 /**
- * Build and execute query to get member information from database
+ * Build and execute query to get information from database for selected member
  * 
  * @return object $member  query object with member data
  */ 
@@ -452,7 +459,7 @@ function buildAndExecuteMemberQuery()
 }
 // ------------------------------------------------------------------------
 /**
- * Update database with a new task and hours
+ * Insert new task and hours into database
  * 
  * @param int    $memid    member_id of user
  * @param int    $taskid   task_id of task to be entered
@@ -505,7 +512,7 @@ function updateMemberHoursTable($memid, $taskid, $taskhrs, $taskdesc)
  * Update database with all tasks entered on form and display number of 
  * hours added. Tasks descriptions are taken from $taskArray session variable.
  *
- * @return $success boolean true if database was updated, false if error
+ * @return $success boolean  true if database was updated, false if error
  */
 function addHoursAndUpdateDatabaseTables()
 {

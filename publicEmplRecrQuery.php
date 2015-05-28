@@ -104,7 +104,7 @@ $doc->addStyleDeclaration($style);
 /**
  * Reset search criteria to defaults
  * 
- * @return mixed[] $srch_parms Array of search parameters
+ * @return array $srch_parms Array of search parameters
  */ 
 function resetSearchParms()
 {
@@ -123,7 +123,7 @@ function resetSearchParms()
 /**
  * Load search parameters from submitted form
  * 
- * @return mixed[] $srch_parms    Array of search parameters
+ * @return array $srch_parms    Array of search parameters
  */ 
 function loadSearchParms()
 {
@@ -136,11 +136,11 @@ function loadSearchParms()
 }
 // ------------------------------------------------------------------------
 /**
- * Display table with member query results
+ * Display table with member search results
  * 
- * @param object[] $members Array of member data objects
+ * @param array $members Array of member data objects
  * 
- * @return None
+ * @return void
  */ 
 function showMemberData($members)
 {
@@ -196,9 +196,9 @@ function showMemberData($members)
 /**
  * Show form fields for search
  * 
- * @param mixed[] $srch_parms Search parameters
+ * @param array $srch_parms Search parameters
  * 
- * @return None
+ * @return void
  */ 
 function showSearchForm($srch_parms)
 {    
@@ -253,9 +253,11 @@ function showSearchForm($srch_parms)
 /**
  * Display table page of members satisfying search criteria
  * 
- * @param mixed[] $srch_parms Array of search parameters
+ * Also display Next/Previous buttons if more than one page of search results
  * 
- * @return None
+ * @param array $srch_parms Array of search parameters
+ * 
+ * @return void
  */ 
 function showSearchResults($srch_parms)
 {
@@ -318,7 +320,7 @@ function showSearchResults($srch_parms)
 /**
  * Load arrays from database
  * 
- * @return None
+ * @return void
  */ 
 function loadSessionArrays()
 {   
@@ -327,9 +329,9 @@ function loadSessionArrays()
 }
 // ------------------------------------------------------------------------
 /**
- * Load industries arrays (iid, iname) from database
+ * Load industries arrays (iid, iname) from database, adding "All" option
  * 
- * @return None
+ * @return void
  */ 
 function loadIndustryArray()
 {    
@@ -355,9 +357,9 @@ function loadIndustryArray()
 
 // ------------------------------------------------------------------------
 /**
- * Load job classes arrays (jid, jname) from database
+ * Load job classes arrays (jid, jname) from database, adding "All" option
  * 
- * @return None
+ * @return void
  */ 
 function loadJobClassArray()
 {
@@ -384,9 +386,9 @@ function loadJobClassArray()
 
 // ------------------------------------------------------------------------
 /**
- * Build query to get member's information from database
+ * Build query to get members' information from database
  * 
- * @param mixed[] $srch_parms Array of search criteria
+ * @param array $srch_parms Array of search criteria
  * 
  * @return object $query Query object
  */ 
